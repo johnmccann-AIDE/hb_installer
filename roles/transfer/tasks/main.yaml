@@ -1,0 +1,23 @@
+- name: debug for hb filename
+  debug:
+    msg: "copying RPM ~/Documents/CVT/healthbot/{{ hb_rpm_map.files[0].path | basename }}"
+- name: Transfer HB rpm file
+  copy:
+    src: "~/Documents/CVT/healthbot/{{ hb_rpm_map.files[0].path | basename }}"
+    dest: "/home/"
+  register: copied
+- name: Install HB rpm
+  yum:
+    name: "/home/{{ hb_rpm_map.files[0].path | basename }}"
+    state: present
+- name: Set certificates folder
+  shell: mkdir /var/local/healthbot/certs
+- name: Gernerate certs files
+  shell: openssl req -nodes -x509 -newkey rsa:4096 -keyout /var/local/healthbot/certs/key.pem -out /var/local/healthbot/certs/cert.pem -days 36525 -subj "/C=US/ST=Ca/L=Svl/O=Juniper Networks/OU=Org/CN=localhost"
+- name: Set directory and permissions
+  file:
+    path: /var/local/healthbot
+    state: directory
+    owner: "{{ hb_user_map }}"
+#- name: Set directory permissions
+#  shell: chown "{{ hb_user_map }}" /var/local/healthbot

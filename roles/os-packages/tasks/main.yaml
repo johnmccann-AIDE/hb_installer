@@ -1,0 +1,29 @@
+- name: Add Docker Repository
+  yum_repository:
+    name: docker-ce
+    description: Docker CE repo
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    gpgkey: https://download.docker.com/linux/centos/gpg
+- name: Install Healthbot software requirements
+  yum:
+   name:
+    - yum-plugin-fastestmirror
+    - yum-utils
+    - epel-release
+    - deltarpm
+    - rsync
+    - net-tools
+    - python3
+    - device-mapper-persistent-data
+    - lvm2
+    - sshpass
+- name: Install Docker software requirements
+  yum:
+   name:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+- name: Enable Docker
+  service: name=docker enabled=yes
+- name: Start Docker
+  service: name=docker state=started

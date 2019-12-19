@@ -1,0 +1,121 @@
+---
+- hosts: all
+  name: gather all facts regardless of target(s)
+  gather_facts: true
+  # Avoid clusters that are partially installed, by aborting if can't gather facts from all hosts
+  any_errors_fatal: true
+  tasks:
+    - name: Check ansible version
+      assert:
+        that:
+          - "{{ansible_version.full is version('2.8.4', '>=')}}"
+        msg: "Ansible version should be 2.8.4 or later. Please upgrade ansible."
+  tags:
+    - always 
+
+- hosts: all
+  name: create groups and users
+  vars_prompt:
+    - name: hb_user
+      prompt: "What is the user to run Healthbot?"
+      register: hb_name
+    - name: hb_password
+      prompt: "What is the password for Healthbot user?"
+      register: hb_password
+  gather_facts: false
+  roles: 
+    - { role: user, tags: ["infra", "healthbot"] }
+
+- hosts: all
+  name: install dependencies
+  gather_facts: false
+  roles: 
+    - { role: os-packages, tags: ["infra", "healthbot"] }
+    - { role: os-updates, tags: ["infra", "healthbot"] } 
+  
+- hosts: master
+  name: install python dependencies
+  gather_facts: false
+  roles:
+    - { role: python-updates, tags: ["infra", "healthbot"] }
+
+- hosts: localhost
+  vars:
+    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
+    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+  name: get Local HB file
+  gather_facts: false
+  roles: 
+    - { role: local, tags: ["infra", "healthbot"] }
+  
+- hosts: master
+  vars:
+    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
+    hb_rpm_map: "{{ hostvars['dummy']['hb_rpm_map'] }}"
+    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+  name: Transfer and Install HB rpm
+  gather_facts: false
+  roles: 
+    - { role: transfer, tags: ["infra", "healthbot"] }
+
+
+- hosts: master
+  vars:
+    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
+    hb_master: "{{ hostvars[groups['master'][0]] }}"
+  name: Install docker machine and create workers
+  gather_facts: false
+  roles: 
+    - { role: docker, tags: ["infra", "healthbot"] }
+    - { role: swarm-init, tags: ["infra", "healthbot"] }
+  become: yes
+  become_user: "{{ hb_user_map }}"
+
+- hosts: workers
+  vars:
+    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    hb_swarm_map: "{{ hostvars['dummy']['hb_swarm_map'] }}"
+    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+  name: Add Nodes to Swarm
+  gather_facts: false
+  roles:
+    - { role: swarm-nodes, tags: ["infra", "healthbot"] }
+  become: yes
+  become_user: "{{ hb_user_map }}"
+
+- hosts: master
+  vars:
+    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
+    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+    hb_certs_path: "/var/local/healthbot/certs/cert.pem"
+    hb_key_file: "/var/local/healthbot/certs/key.pem"
+  name: Configure healthbot config
+  gather_facts: false
+  roles: 
+    - { role: config, tags: ["infra", "healthbot"] }
+  become: yes
+  become_user: root
+
+- hosts: master
+  vars:
+    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+  name: Setup HB with configuration
+  gather_facts: false
+  roles: 
+    - { role: setup, tags: ["infra", "healthbot"] }
+  become: yes
+  become_user: root
+
+- hosts: master
+  vars:
+    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+  name: Start HB with configuration
+  gather_facts: false
+  roles: 
+    - { role: startup, tags: ["infra", "healthbot"] }
+  become: yes
+  become_user: "{{ hb_user_map }}"

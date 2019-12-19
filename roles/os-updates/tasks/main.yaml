@@ -1,0 +1,46 @@
+- firewalld:
+    port: 2376-2377/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 7946/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 80/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 7946/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 4789/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- name: "Transfer get-pip file"
+  copy:
+    src: "./roles/files/get-pip.py"
+    dest: /root/
+- name: Install pip
+  shell: python get-pip.py
+- name: Pip install docker-py
+  shell: pip install docker-py
+- name: Sets enforce
+  shell: setenforce 0
+- name: Disable SELinux
+  selinux:
+    state: disabled
+- name: Update hosts file
+  blockinfile:
+    path: /etc/hosts
+    create: yes
+    block: |
+      {% for item in ansible_play_batch %}
+      {{ hostvars[item].ansible_ssh_host }}   {{ item }}
+      {% endfor %}

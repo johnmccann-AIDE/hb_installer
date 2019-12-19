@@ -1,0 +1,13 @@
+- name: Get RPM name from directory
+  find:
+    paths: "~/Documents/CVT/healthbot/"
+    file_type: "file"
+    patterns: "healthbot*"
+  register: hb_rpm
+- name: debug healthbot filename
+  debug:
+    msg: "rpm -  {{ hb_rpm }} "
+- name: Register dummy host with file variable
+  add_host:
+    name: "dummy"
+    hb_rpm_map: "{{ hb_rpm }}"

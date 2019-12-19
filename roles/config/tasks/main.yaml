@@ -1,0 +1,26 @@
+- name: Setup multi-node    
+  shell: sed -i -r -e '/multi_node/s/# //' /var/local/healthbot/healthbot.conf
+- name: Add swarm mode
+  shell: sed -i -r -e '/docker-swarm/s/# //' /var/local/healthbot/healthbot.conf
+- name: Add users to config
+  shell: sed -i -e "s/<user>/{{ hb_user_map }}/g" /var/local/healthbot/healthbot.conf
+- name: Remove comment for username
+  shell: sed -i -r -e '/username:/s/# //' /var/local/healthbot/healthbot.conf
+- name: Add pwd to config
+  shell: sed -i -e "s/<password>/{{ hb_pass_map }}/g" /var/local/healthbot/healthbot.conf
+- name: Remove comment for password
+  shell: sed -i -r -e '/password:/s/# //' /var/local/healthbot/healthbot.conf
+- name: Setup host https certificates
+  shell: sed -i -r -e '/https:/s/# //' /var/local/healthbot/healthbot.conf
+- name: Configure certificate file name
+  shell: sed -i -r -e '/cert_file/s/# //' /var/local/healthbot/healthbot.conf
+- name: Re-configure certificate path
+  shell: sed -i 's#/path/to#/var/local/healthbot/certs#' /var/local/healthbot/healthbot.conf
+- name: Apply key file name
+  shell: sed -i -r -e '/key_file/s/# //' /var/local/healthbot/healthbot.conf
+- name: Re-configure key file path
+  shell: sed -i 's#/path/to#/var/local/healthbot/certs#' /var/local/healthbot/healthbot.conf
+- name: Set host ip
+  shell: sed -i -e  "s/<ip>/{{ hb_master }}/g" /var/local/healthbot/healthbot.conf
+- name: Remove comment for host ip
+  shell: sed -i -r -e '/host_ip:/s/# //' /var/local/healthbot/healthbot.conf

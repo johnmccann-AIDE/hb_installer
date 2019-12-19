@@ -1,0 +1,22 @@
+- name: Debug vars 
+  debug:
+    var: hostvars['dummy']
+- name: Setup passwordless access to master node
+  shell: sshpass -p "{{ hb_pass_map }}" ssh-copy-id -o StrictHostKeyChecking=no "{{ hb_user_map }}@{{ item }}"
+  with_items:
+    - "{{ groups['master'] }}"
+- name: Setup passwordless access to worker nodes
+  shell: sshpass -p "{{ hb_pass_map }}" ssh-copy-id -o StrictHostKeyChecking=no "{{ hb_user_map }}@{{ item }}"
+  with_items: 
+    - "{{ groups['workers'] }}"
+- name: Check that docker-machine isn't installed
+  stat:
+    path: /usr/local/bin/docker-machine
+  register: stat_result
+- name: Install docker-machine
+  shell: base=https://github.com/docker/machine/releases/download/v0.16.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && sudo mv /tmp/docker-machine /usr/local/bin/docker-machine && chmod +x /usr/local/bin/docker-machine
+  when: stat_result.stat.exists == False
+- name: Add workers to docker-machine
+  shell: docker-machine create --driver generic --generic-ip-address {{ hostvars[item].ansible_ssh_host }} --generic-ssh-user healthbot --generic-ssh-key ~/.ssh/id_rsa {{ item }}
+  with_items: 
+    - "{{ groups['workers'] }}"

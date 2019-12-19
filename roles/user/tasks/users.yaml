@@ -1,0 +1,31 @@
+- hosts: all
+  become: true
+  vars_prompt:
+    - name: "user"
+      prompt: "What is the user to run Healthbot?"
+    - name: "password"
+      prompt: "What is the password for Healthbot user?"
+
+  tasks:
+  - name: Add the user with a bash shell, appending the group 'wheel' and 'docker' to the user's groups
+    remote_user: ansible
+    user:
+      name: "{{ user }}"
+      password: "{{ password | password_hash('sha512') }}"
+      home: "/home/{{ user }}"
+      shell: /bin/bash
+      groups: wheel,docker
+      append: yes
+
+  - name: Set directory and permissions
+    file:
+      path: /var/local/healthbot
+      state: directory
+      owner: "{{ user }}"
+      mode: 0775
+
+  - name: Add user to sudoers
+    shell: sed -i -r -e '/^\s*Defaults\s+secure_path/ s[=(.*)[=\1:/usr/local/bin[' /etc/sudoers
+
+  - name: Set No Password access
+    shell: sed -i -r -e '/NOPASSWD/s/# //' /etc/sudoers
