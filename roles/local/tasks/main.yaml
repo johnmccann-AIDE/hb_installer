@@ -1,6 +1,6 @@
 - name: Get RPM name from directory
   find:
-    paths: "~/Documents/CVT/healthbot/"
+    paths: "/home/healthbot/"
     file_type: "file"
     patterns: "healthbot*"
   register: hb_rpm
