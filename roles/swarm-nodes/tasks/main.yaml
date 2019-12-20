@@ -9,8 +9,3 @@
     msg: "running command - docker swarm join --token {{ hb_swarm_map.swarm_facts.JoinTokens.Worker }} {{ hb_master }}:2377"
 - name: Add Swarm nodes
   shell: docker swarm join --token "{{ hb_swarm_map.swarm_facts.JoinTokens.Worker }}" "{{ hb_master }}:2377"
-#  docker_swarm:
-#      state: join
-#      advertise_addr: "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
-#      join_token: "{{ hb_swarm_map.swarm_facts.JoinTokens.Worker }}"
-#      remote_addrs: "{{ hb_master }}:2377"
