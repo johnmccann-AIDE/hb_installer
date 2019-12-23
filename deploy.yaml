@@ -80,7 +80,7 @@
   vars:
     #hb_user_map: "{{ groupvars['hb_user_map'] }}"
     hb_swarm_map: "{{ hostvars['melmore']['hb_swarm_map'] }}"
-    #hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
   name: Add Nodes to Swarm
   gather_facts: false
   roles:
@@ -92,7 +92,7 @@
   vars:
     #hb_user_map: "{{ groupvars['hb_user_map'] }}"
     #hb_pass_map: "{{ groupvars['hb_pass_map'] }}"
-    #hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
     hb_certs_path: "/var/local/healthbot/certs/cert.pem"
     hb_key_file: "/var/local/healthbot/certs/key.pem"
   name: Configure healthbot config
