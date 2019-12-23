@@ -1,6 +1,6 @@
 - name: debug for hb filename
   debug:
-    msg: "copying RPM {{ hb_rpm_patha }}/{{ hb_rpm_map.files[0].path | basename }}"
+    msg: "copying RPM {{ hb_rpm_path }}/{{ hb_rpm_map.files[0].path | basename }}"
 - name: Transfer HB rpm file
   copy:
     src: "{{ hb_rpm_path }}/{{ hb_rpm_map.files[0].path | basename }}"
