@@ -18,9 +18,11 @@
   vars_prompt:
     - name: hb_user
       prompt: "What is the user to run Healthbot?"
+      default: healthbot
       register: hb_name
     - name: hb_password
       prompt: "What is the password for Healthbot user?"
+      default: Password01
       register: hb_password
   gather_facts: false
   roles: 
