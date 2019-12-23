@@ -21,6 +21,8 @@
 - name: Re-configure key file path
   shell: sed -i 's#/path/to#/var/local/healthbot/certs#' /var/local/healthbot/healthbot.conf
 - name: Set host ip
-  shell: sed -i -e  "s/<ip>/{{ hb_master }}/g" /var/local/healthbot/healthbot.conf
+  shell: sed -i -e  "s/<ip>/{{ hostvars[inventory_hostname].ansible_ssh_host }}/g" /var/local/healthbot/healthbot.conf
 - name: Remove comment for host ip
   shell: sed -i -r -e '/host_ip:/s/# //' /var/local/healthbot/healthbot.conf
+- name: Re-add comment for 'Refer' line
+  shell: sed -i -e 's/Refer:/# Refer:/g' /var/local/healthbot/healthbot.conf

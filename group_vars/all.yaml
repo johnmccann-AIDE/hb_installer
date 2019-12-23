@@ -1,0 +1,7 @@
+---
+hb_user_map: healthbot
+hb_pass_map: Password01
+hb_master: "{{ groups['master'][0].ansible_ssh_host }}"
+#hb_swarm_map: "{{ hb_swarm_map.swarm_facts.JoinTokens }}"
+hb_certs_path: "/var/local/healthbot/certs/cert.pem"
+hb_key_file: "/var/local/healthbot/certs/key.pem"

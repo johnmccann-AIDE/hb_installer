@@ -13,14 +13,14 @@
     generate_ssh_key: yes
     ssh_key_bits: 2048
     ssh_key_file: .ssh/id_rsa
-- name: Register dummy host with user variable
-  add_host:
-    name: "dummy"
-    hb_user_map: "{{vars.hb_user}}"
-- name: Register dummy host with passwd variable
-  add_host:
-    name: "dummy"
-    hb_pass_map: "{{vars.hb_password}}"
+#- name: Register dummy host with user variable
+#  add_host:
+#    name: "dummy"
+#    hb_user_map: "{{vars.hb_user}}"
+#- name: Register dummy host with passwd variable
+#  add_host:
+#    name: "dummy"
+#    hb_pass_map: "{{vars.hb_password}}"
 - name: Set directory and permissions
   file:
     path: /var/local/healthbot

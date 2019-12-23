@@ -1,6 +1,3 @@
-- name: Debug vars 
-  debug:
-    var: hostvars['dummy']
 - name: Setup passwordless access to master node
   shell: sshpass -p "{{ hb_pass_map }}" ssh-copy-id -o StrictHostKeyChecking=no "{{ hb_user_map }}@{{ item }}"
   with_items:

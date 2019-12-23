@@ -1,9 +1,6 @@
 - name: Debug vars 
   debug:
     msg: "Swarm Tokens {{ hb_swarm_map.swarm_facts.JoinTokens }}"
-- name: Debug host
-  debug:
-    var: hostvars[inventory_hostname].ansible_ssh_host
 - name: Debug command
   debug:
     msg: "running command - docker swarm join --token {{ hb_swarm_map.swarm_facts.JoinTokens.Worker }} {{ hb_master }}:2377"

@@ -18,11 +18,9 @@
   vars_prompt:
     - name: hb_user
       prompt: "What is the user to run Healthbot?"
-      default: "healthbot"
       register: hb_name
     - name: hb_password
       prompt: "What is the password for Healthbot user?"
-      default: "Password01"
       register: hb_password
   gather_facts: false
   roles: 
@@ -43,9 +41,9 @@
 
 - hosts: localhost
   vars:
-    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
-    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
-    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+    #hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    #hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
+    #hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
   name: get Local HB file
   gather_facts: false
   roles: 
@@ -53,9 +51,9 @@
   
 - hosts: master
   vars:
-    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
-    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
-    hb_rpm_map: "{{ hostvars['dummy']['hb_rpm_map'] }}"
+    #hb_user_map: "{{ hb_user_map }}"
+    #hb_pass_map: "{{ hb_pass_map }}"
+    hb_rpm_map: "{{ hostvars['localhost']['hb_rpm_map'] }}"
     hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
   name: Transfer and Install HB rpm
   gather_facts: false
@@ -65,8 +63,8 @@
 
 - hosts: master
   vars:
-    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
-    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
+    #hb_user_map: "{{ groupvars['hb_user_map'] }}"
+    #hb_pass_map: "{{ groupvars['hb_pass_map'] }}"
     hb_master: "{{ hostvars[groups['master'][0]] }}"
   name: Install docker machine and create workers
   gather_facts: false
@@ -78,9 +76,9 @@
 
 - hosts: workers
   vars:
-    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
-    hb_swarm_map: "{{ hostvars['dummy']['hb_swarm_map'] }}"
-    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+    #hb_user_map: "{{ groupvars['hb_user_map'] }}"
+    hb_swarm_map: "{{ hostvars['melmore']['hb_swarm_map'] }}"
+    #hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
   name: Add Nodes to Swarm
   gather_facts: false
   roles:
@@ -90,9 +88,9 @@
 
 - hosts: master
   vars:
-    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
-    hb_pass_map: "{{ hostvars['dummy']['hb_pass_map'] }}"
-    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+    #hb_user_map: "{{ groupvars['hb_user_map'] }}"
+    #hb_pass_map: "{{ groupvars['hb_pass_map'] }}"
+    #hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
     hb_certs_path: "/var/local/healthbot/certs/cert.pem"
     hb_key_file: "/var/local/healthbot/certs/key.pem"
   name: Configure healthbot config
@@ -104,7 +102,7 @@
 
 - hosts: master
   vars:
-    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    #hb_user_map: "{{ groupvars['hb_user_map'] }}"
   name: Setup HB with configuration
   gather_facts: false
   roles: 
@@ -114,7 +112,7 @@
 
 - hosts: master
   vars:
-    hb_user_map: "{{ hostvars['dummy']['hb_user_map'] }}"
+    #hb_user_map: "{{ groupvars['hb_user_map'] }}"
   name: Start HB with configuration
   gather_facts: false
   roles: 

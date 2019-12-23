@@ -1,19 +1,18 @@
-- name: Debug vars 
-  debug:
-    var: hostvars['dummy']
 - name: Debug host
   debug:
     var: hostvars[inventory_hostname].ansible_ssh_host
 - name: Initialise docker-swarm
-#  shell: docker swarm init --advertise-addr "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
-  docker_swarm:
-    state: present
-    advertise_addr: "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
-- name: Inspect the swarm info
+  shell: docker swarm init --advertise-addr "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
+#  docker_swarm:
+#    state: present
+#    advertise_addr: "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
+- name: Inspect swarm
   docker_swarm:
     state: inspect
   register: swarm_info
-- name: Register dummy host with swarm_info
+- name: Register master host with swarm_info
   add_host:
-    name: "dummy"
+    name: "melmore"
     hb_swarm_map: "{{ swarm_info }}"
+#- set_fact:
+#    hb_swarm_map: "{{ swarm_info }}"
