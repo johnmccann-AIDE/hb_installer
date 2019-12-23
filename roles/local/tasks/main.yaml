@@ -1,6 +1,6 @@
 - name: Get RPM name from directory
   find:
-    paths: "~/Documents/builds/"
+    paths: "{{ hb_rpm_path }}"
     file_type: "file"
     patterns: "healthbot*"
   register: hb_rpm
