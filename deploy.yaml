@@ -110,7 +110,7 @@
   roles: 
     - { role: setup, tags: ["infra", "healthbot"] }
   become: yes
-  become_user: root
+  become_user: "{{ hb_user_map }}"
 
 - hosts: master
   vars:

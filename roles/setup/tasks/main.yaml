@@ -1,7 +1,11 @@
+- name: Setting up healthbot using configuration 
+  debug:
+    msg: "setting up healthbot with config /var/local/healthbot/healthbot.conf"
 - name: Setup Healthbot 
-  shell: healthbot setup -c /var/local/healthbot/healthbot.conf
+  shell: sudo healthbot setup -c /var/local/healthbot/healthbot.conf
 - name: Set directory and permissions
-  file:
-    path: /var/local/healthbot
-    state: directory
-    owner: "{{ hb_user_map }}"
+  shell: sudo chown healthbot /var/local/healthbot
+#  file:
+#    path: /var/local/healthbot
+#    state: directory
+#    owner: "{{ hb_user_map }}"

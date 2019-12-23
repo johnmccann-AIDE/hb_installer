@@ -1,2 +1,5 @@
+- name: Starting healthbot
+  debug:
+    msg: "Starting healthbot with user {{ hb_user_map }}"
 - name: Start the Healthbot Application
   shell: healthbot start
