@@ -33,13 +33,19 @@
   gather_facts: false
   roles: 
     - { role: os-packages, tags: ["infra", "healthbot"] }
-    - { role: os-updates, tags: ["infra", "healthbot"] } 
+    - { role: os-updates, tags: ["infra", "healthbot"] }
+    - { role: kube-init, tags: ["init"] }
+    - { role: os-changes, tags: ["init", "infra"] }
+  become: yes
+  become_user: root
   
 - hosts: master
   name: install python dependencies
   gather_facts: false
   roles:
-    - { role: python-updates, tags: ["infra", "healthbot"] }
+    - { role: python-updates, tags: ["init", "infra", "healthbot"] }
+  become: yes
+  become_user: root
 
 - hosts: localhost
   vars:
@@ -76,6 +82,18 @@
   become: yes
   become_user: "{{ hb_user_map }}"
 
+- hosts: master
+  vars:
+    #hb_user_map: "{{ groupvars['hb_user_map'] }}"
+    #hb_pass_map: "{{ groupvars['hb_pass_map'] }}"
+    hb_master: "{{ hostvars[groups['master'][0]] }}"
+  name: Install docker machine and create workers
+  gather_facts: false
+  roles: 
+    - { role: kubeadm-init, tags: ["init"] }
+  become: yes
+  become_user: root
+
 - hosts: workers
   vars:
     #hb_user_map: "{{ groupvars['hb_user_map'] }}"
@@ -87,6 +105,18 @@
     - { role: swarm-nodes, tags: ["infra", "healthbot"] }
   become: yes
   become_user: "{{ hb_user_map }}"
+
+- hosts: workers
+  vars:
+    kubeadm_join: "{{ groups['master'][0].kubeadm_join }}"
+    kubeadm_join_node: "{{ hostvars['melmore']['kubeadm_join_node'] }}"
+    hb_master: "{{ hostvars[groups['master'][0]].ansible_ssh_host }}"
+  name: Add Nodes to Kubernetes
+  gather_facts: false
+  roles:
+    - { role: kubeadm-nodes, tags: ["init"] }
+  become: yes
+  become_user: root
 
 - hosts: master
   vars:

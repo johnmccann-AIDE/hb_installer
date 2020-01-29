@@ -1,0 +1,29 @@
+- name: Add Kubernetes Repository
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+- name: Install Docker software requirements
+  yum:
+   name:
+    - kubeadm
+    - docker
+- name: Enable Kubelet
+  service: name=kubelet enabled=yes
+- name: Start Kubelet
+  service: name=kubelet state=started
+- name: Enable Docker
+  service: name=docker enabled=yes
+- name: Start Docker
+  service: name=docker state=started
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+- name: Run kubeadm join
+  shell: "{{ kubeadm_join_node }} --ignore-preflight-errors=swap"

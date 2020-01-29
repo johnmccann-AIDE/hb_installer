@@ -1,0 +1,78 @@
+- firewalld:
+    port: 2379-2380/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 6443/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 80/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 10248/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 10249/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 10250/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 10251/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 10252/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 10255/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 6783/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 30000-32767/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- name: Set IPtables
+  shell: echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+- name: "Transfer get-pip file"
+  copy:
+    src: "./roles/files/get-pip.py"
+    dest: /root/
+- name: Install pip
+  shell: python get-pip.py
+- name: Pip install docker-py
+  shell: pip install docker-py
+- name: Sets enforce
+  shell: setenforce 0
+- name: Update hosts file
+  blockinfile:
+    path: /etc/hosts
+    create: yes
+    block: |
+      {% for item in ansible_play_batch %}
+      {{ hostvars[item].ansible_ssh_host }}   {{ item }}
+      {% endfor %}
+- name: Disable SELinux
+  selinux:
+    state: disabled
