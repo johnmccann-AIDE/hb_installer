@@ -1,5 +1,5 @@
 - name: Initialise Kubeadm
-  shell: kubeadm init –pod-network-cidr=10.244.0.0/16
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16
   register: kube_token
 - name: Create Home Kube folder
   file:
