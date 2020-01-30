@@ -32,7 +32,7 @@
 #    var: kubver
 - name: Create thirdparty flannel folder
   file:
-    path: /root/hirdparty/kube-flannel/
+    path: /root/thirdparty/kube-flannel/
     state: directory
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
