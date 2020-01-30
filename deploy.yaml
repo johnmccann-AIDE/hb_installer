@@ -43,7 +43,7 @@
   name: install python dependencies
   gather_facts: false
   roles:
-    - { role: python-updates, tags: ["init", "infra", "healthbot"] }
+    - { role: python-updates, tags: [infra", "healthbot"] }
   become: yes
   become_user: root
 
