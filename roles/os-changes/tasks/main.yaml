@@ -29,13 +29,9 @@
     state: enabled
     immediate: yes
 - name: Reload firewalld
-  shell: firewall-cmd –-reload
+  shell: firewall-cmd --reload
 - name: Set IPtables
   shell: echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
-- name: "Transfer get-pip file"
-  copy:
-    src: "./roles/files/get-pip.py"
-    dest: /root/
 - name: Remove swapfile from /etc/fstab
   mount:
     name: swap
