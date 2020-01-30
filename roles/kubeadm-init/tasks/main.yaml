@@ -1,21 +1,8 @@
-- name: Remove swapfile from /etc/fstab
-  mount:
-    name: swap
-    fstype: swap
-    state: absent
-- name: Disable swap
-  command: swapoff -a
-  when: ansible_swaptotal_mb > 0
+- name: Apply Pod Network
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 - name: Initialise Kubeadm
-  shell: kubeadm init
+  shell: kubeadm init –pod-network-cidr=10.244.0.0/16
   register: kube_token
-#- name: Register master host with token information
-#  add_host:
-#    name: "melmore"
-#    kube_token_map: "{{ kube_token }}"
-#- name: Debug output for token
-#  debug:
-#    var: kube_token.stdout_lines
 - name: Create Home Kube folder
   file:
     path: /root/.kube
@@ -24,25 +11,6 @@
     group: "{{ ansible_ssh_user }}"
 - name: Copy config to Kube folder
   shell: cp -i /etc/kubernetes/admin.conf /root/.kube/config
-#- name: Setup Kube Controller
-#  shell: export kubever=$(kubectl version | base64 | tr -d '\n')
-#  register: kubver
-#- name: Show Kube version
-#  debug:
-#    var: kubver
-- name: Create thirdparty flannel folder
-  file:
-    path: /root/thirdparty/kube-flannel/
-    state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-- name: Transfer flannel yaml file
-  copy:
-    src: "thirdparty/kube-flannel/kube-flannel.yaml"
-    dest: "/root/thirdparty/kube-flannel/kube-flannel.yaml"
-  register: copied
-- name: Apply Pod Network
-  shell: kubectl apply -f /root/thirdparty/kube-flannel/kube-flannel.yaml
 - name: Generate join token
   shell: kubeadm token create --print-join-command
   register: kubeadm_join_cmd

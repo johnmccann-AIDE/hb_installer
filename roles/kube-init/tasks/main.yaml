@@ -21,6 +21,8 @@
   yum:
    name:
     - kubeadm
+    - kubelet
+    - kubectl
     - docker
 - name: Enable Kubelet
   service: name=kubelet enabled=yes
@@ -30,3 +32,5 @@
   service: name=docker enabled=yes
 - name: Start Docker
   service: name=docker state=started
+- name: Set Hostnames on node
+  shell: hostnamectl set-hostname "{{ ansible_hostname }}"
