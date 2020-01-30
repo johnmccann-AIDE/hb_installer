@@ -30,6 +30,12 @@
 #- name: Show Kube version
 #  debug:
 #    var: kubver
+- name: Create thirdparty flannel folder
+  file:
+    path: /root/hirdparty/kube-flannel/
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 - name: Transfer flannel yaml file
   copy:
     src: "thirdparty/kube-flannel/kube-flannel.yaml"
