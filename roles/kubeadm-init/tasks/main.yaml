@@ -30,8 +30,13 @@
 #- name: Show Kube version
 #  debug:
 #    var: kubver
+- name: Transfer flannel yaml file
+  copy:
+    src: "thirdparty/kube-flannel/kube-flannel.yaml"
+    dest: "/root/thirdparty/kube-flannel/kube-flannel.yaml"
+  register: copied
 - name: Apply Pod Network
-  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
+  shell: kubectl apply -f /root/thirdparty/kube-flannel/kube-flannel.yaml
 - name: Generate join token
   shell: kubeadm token create --print-join-command
   register: kubeadm_join_cmd
