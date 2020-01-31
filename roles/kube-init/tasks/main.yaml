@@ -10,13 +10,13 @@
     - yum-plugin-fastestmirror
     - yum-utils
     - epel-release
-    - deltarpm
-    - rsync
-    - net-tools
-    - python3
-    - device-mapper-persistent-data
-    - lvm2
-    - sshpass
+#    - deltarpm
+#    - rsync
+#    - net-tools
+#    - python3
+#    - device-mapper-persistent-data
+#    - lvm2
+#    - sshpass
 - name: Install Docker/Kubernetes software tools
   yum:
    name:
