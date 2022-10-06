@@ -78,6 +78,34 @@
       {% for item in ansible_play_batch %}
       {{ hostvars[item].ansible_ssh_host }}   {{ item }}
       {% endfor %}
+- name: Add kube address
+  shell: echo '34.107.204.206        dl.k8s.io' >> /etc/hosts
+- name: Add kube storage address
+  shell: echo '142.250.191.48        storage.googleapis.com' >> /etc/hosts
+- name: Add kube registry
+  shell: echo '34.107.244.51         registry.k8s.io' >> /etc/hosts
+- name: Add gcr registry
+  shell: echo '142.250.141.82        eu.gcr.io' >> /etc/hosts 
+- name: Add docker repo
+  shell: echo '18.67.240.29          download.docker.com' >> /etc/hosts
+- name: Add k8s repo
+  shell: echo '142.250.141.82        k8s.gcr.io' >> /etc/hosts
+- name: Add Calico
+  shell: echo '104.196.30.220        docs.projectcalico.org' >> /etc/hosts
+- name: Add Github
+  shell: echo '185.199.110.133       raw.githubusercontent.com' >> /etc/hosts
+- name: Add docker io
+  shell: echo '18.210.197.188        docker.io' >> /etc/hosts
+- name: Add docker registry
+  shell: echo '44.205.64.79          registry-1.docker.io' >> /etc/hosts
+- name: Add auth docker io
+  shell: echo '3.216.34.172          auth.docker.io' >> /etc/hosts
+- name: Add cloudflare
+  shell: echo '104.18.123.25         production.cloudflare.docker.com' >> /etc/hosts
+- name: Add quay io
+  shell: echo '52.5.230.17           quay.io' >> /etc/hosts
+- name: Add cdn quay io
+  shell: echo '108.157.109.15        cdn02.quay.io' >> /etc/hosts
 - name: Disable SELinux
   selinux:
     state: disabled

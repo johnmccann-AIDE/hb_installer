@@ -23,14 +23,14 @@
     permanent: yes
     state: enabled
     immediate: yes
-- name: "Transfer get-pip file"
-  copy:
-    src: "./roles/files/get-pip.py"
-    dest: /root/
-- name: Install pip
-  shell: python get-pip.py
-- name: Pip install docker-py
-  shell: pip install docker-py
+#- name: "Transfer get-pip file"
+#  copy:
+#    src: "./roles/files/get-pip.py"
+#    dest: /root/
+#- name: Install pip
+#  shell: python get-pip.py
+#- name: Pip install docker-py
+#  shell: pip install docker-py
 - name: Sets enforce
   shell: setenforce 0
 - name: Disable SELinux

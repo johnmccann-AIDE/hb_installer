@@ -19,14 +19,14 @@
     - name: hb_user
       prompt: "What is the user to run Healthbot?"
       default: healthbot
-      register: hb_name
+      # register: hb_name
     - name: hb_password
       prompt: "What is the password for Healthbot user?"
       default: Password01
-      register: hb_password
+      # register: hb_password
   gather_facts: false
   roles: 
-    - { role: user, tags: ["infra", "healthbot"] }
+    - { role: user, tags: ["healthbot"] }
 
 - hosts: all
   name: install dependencies
@@ -34,7 +34,7 @@
   roles: 
     - { role: os-packages, tags: ["infra", "healthbot"] }
     - { role: os-updates, tags: ["infra", "healthbot"] }
-    - { role: kube-init, tags: ["init"] }
+    - { role: kube-init, tags: ["init", "infra"] }
     - { role: os-changes, tags: ["init", "infra"] }
   become: yes
   become_user: root
@@ -66,7 +66,7 @@
   name: Transfer and Install HB rpm
   gather_facts: false
   roles: 
-    - { role: transfer, tags: ["infra", "healthbot"] }
+    - { role: transfer, tags: ["healthbot"] }
 
 
 - hosts: master
@@ -77,8 +77,8 @@
   name: Install docker machine and create workers
   gather_facts: false
   roles: 
-    - { role: docker, tags: ["infra", "healthbot"] }
-    - { role: swarm-init, tags: ["infra", "healthbot"] }
+    - { role: docker, tags: ["healthbot"] }
+    - { role: swarm-init, tags: ["healthbot"] }
   become: yes
   become_user: "{{ hb_user_map }}"
 
@@ -90,7 +90,7 @@
   name: Install docker machine and create workers
   gather_facts: false
   roles: 
-    - { role: kubeadm-init, tags: ["init"] }
+    - { role: kubeadm-init, tags: ["init", "infra"] }
   become: yes
   become_user: root
 
@@ -102,7 +102,7 @@
   name: Add Nodes to Swarm
   gather_facts: false
   roles:
-    - { role: swarm-nodes, tags: ["infra", "healthbot"] }
+    - { role: swarm-nodes, tags: ["healthbot"] }
   become: yes
   become_user: "{{ hb_user_map }}"
 
@@ -114,7 +114,7 @@
   name: Add Nodes to Kubernetes
   gather_facts: false
   roles:
-    - { role: kubeadm-nodes, tags: ["init"] }
+    - { role: kubeadm-nodes, tags: ["init", "infra"] }
   become: yes
   become_user: root
 
@@ -128,7 +128,7 @@
   name: Configure healthbot config
   gather_facts: false
   roles: 
-    - { role: config, tags: ["infra", "healthbot"] }
+    - { role: config, tags: ["healthbot"] }
   become: yes
   become_user: root
 
@@ -138,7 +138,7 @@
   name: Setup HB with configuration
   gather_facts: false
   roles: 
-    - { role: setup, tags: ["infra", "healthbot"] }
+    - { role: setup, tags: ["healthbot"] }
   become: yes
   become_user: "{{ hb_user_map }}"
 
@@ -148,6 +148,6 @@
   name: Start HB with configuration
   gather_facts: false
   roles: 
-    - { role: startup, tags: ["infra", "healthbot"] }
+    - { role: startup, tags: ["healthbot"] }
   become: yes
   become_user: "{{ hb_user_map }}"

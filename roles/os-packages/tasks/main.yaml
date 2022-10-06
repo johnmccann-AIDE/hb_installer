@@ -20,10 +20,17 @@
 - name: Install Docker software requirements
   yum:
    name:
-    - docker-ce
-    - docker-ce-cli
+    - docker
     - containerd.io
+#    - docker-ce
+#    - docker-ce-cli
 - name: Enable Docker
   service: name=docker enabled=yes
 - name: Start Docker
   service: name=docker state=started
+- name: Config Containerd
+  shell: containerd config default > /etc/containerd/config.toml
+- name: Enable Containerd
+  service: name=containerd enabled=yes
+- name: Start Containerd
+  service: name=containerd state=started

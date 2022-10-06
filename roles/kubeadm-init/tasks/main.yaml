@@ -1,4 +1,5 @@
 - name: Initialise Kubeadm
+#  shell: kubeadm init
   shell: kubeadm init --pod-network-cidr=10.244.0.0/16
   register: kube_token
 - name: Create Home Kube folder
@@ -8,9 +9,11 @@
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
 - name: Copy config to Kube folder
-  shell: cp -i /etc/kubernetes/admin.conf /root/.kube/config
+  shell: cp /etc/kubernetes/admin.conf /root/.kube/config
 - name: Apply Pod Network
-  shell: kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
+#  shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/tigera-operator.yaml
+#  shell: kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
+  shell: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/canal.yaml
 - name: Generate join token
   shell: kubeadm token create --print-join-command
   register: kubeadm_join_cmd
