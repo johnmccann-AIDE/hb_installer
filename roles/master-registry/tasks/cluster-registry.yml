@@ -1,0 +1,51 @@
+---
+- name: Check docker0 exists
+  shell: "ip link show docker0 | wc -l"
+  register: docker0Existence
+
+- name: Start docker if missing docker0
+  service:
+    name: docker
+    state: restart
+  when: docker0Existence is undefined or docker0Existence.stdout | int < 2
+
+- name: Create image and app directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - "/etc/kubernetes/images/infra"
+    - "/etc/kubernetes/apps/infra/registry"
+
+- name: Transfer cluster-registry image
+  copy:
+    src: files/registry_2.6.2.tgz
+    dest: /etc/kubernetes/images/infra/
+    owner: root
+    group: root
+    mode: 0744
+
+- name: Load cluster-registry image
+  shell: "docker load -i /etc/kubernetes/images/infra/registry_2.6.2.tgz"
+
+- name: Install in-cluster registry definition
+  template:
+  args:
+    src: "{{ item }}.j2"
+    dest: "/etc/kubernetes/apps/infra/registry/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - joc-registry.yml
+
+- name: Create in-cluster registry volume
+  file:
+    path: "{{ persistencePath }}/image-store/"
+    state: directory
+    recurse: yes
+
+- name: Start in-cluster registry pod
+  shell: "kubectl create -f /etc/kubernetes/apps/infra/registry/joc-registry.yml"
+  ignore_errors: true

@@ -106,6 +106,8 @@
   shell: echo '52.5.230.17           quay.io' >> /etc/hosts
 - name: Add cdn quay io
   shell: echo '108.157.109.15        cdn02.quay.io' >> /etc/hosts
+- name: Update DNS in resolv.conf
+  shell: echo 'nameserver 172.26.138.141' > /etc/resolv.conf
 - name: Disable SELinux
   selinux:
     state: disabled

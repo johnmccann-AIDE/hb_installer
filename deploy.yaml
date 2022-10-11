@@ -151,3 +151,35 @@
     - { role: startup, tags: ["healthbot"] }
   become: yes
   become_user: "{{ hb_user_map }}"
+
+- hosts: master
+  gather_facts: false
+  name: Retrieve Cluster Config
+  roles:
+    - { role: get-config, tags: ["infra", "ingress"] }
+  become: yes
+  become_user: root
+
+- hosts: all
+  gather_facts: false
+  name: Set Nameserver
+  roles:
+    - { role: set-nameserver, tags: ["infra", "ingress"] }
+  become: yes
+  become_user: root
+
+- hosts: master
+  name: Deploy Registry
+  gather_facts: false
+  roles:
+    - { role: master-registry, tags: ["infra"] }
+  become: yes
+  become_user: root
+
+- hosts: localhost
+  name: Deploy Ingress Controller
+  gather_facts: false
+  roles:
+    - { role: master-ingress, tags: ["infra"] }
+  become: yes
+  become_user: root

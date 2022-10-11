@@ -1,0 +1,53 @@
+#REV: {{ jocRevision | default('latest') }} (ID: {{ jocCommit | default('unknown') }})
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  namespace: kube-system
+  labels:
+    {{ appLabel | default('joc-app') }}: registry
+    {{ versionLabel | default('joc-version') }}: {{ jocRevision | default('latest') }}
+spec:
+  replicas: 1
+  minReadySeconds: 20
+  selector:
+    matchLabels:
+      {{ appLabel | default('joc-app') }}: registry
+  template:
+    metadata:
+      labels:
+        {{ appLabel | default('joc-app') }}: registry
+        {{ versionLabel | default('joc-version') }}: {{ jocRevision | default('latest') }}
+    spec:
+      containers:
+      - name: registry
+        image: registry:2.6.2
+        imagePullPolicy: IfNotPresent
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: REGISTRY_HTTP_ADDR
+          value: :5000
+        - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+          value: /var/lib/registry
+        volumeMounts:
+        - name: image-store
+          mountPath: /var/lib/registry
+        ports:
+        - containerPort: 5000
+          hostPort: 5000
+          name: registry
+          protocol: TCP
+      nodeSelector:
+        kubernetes.io/hostname: melmore
+      volumes:
+      - name: image-store
+        hostPath:
+          path: "{{ persistencePath }}/image-store"

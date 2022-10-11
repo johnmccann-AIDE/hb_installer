@@ -1,0 +1,6 @@
+- name: Set Nameserver
+  shell: "echo 'nameserver 172.26.138.141' >> /etc/resolv.conf"
+
+- name: Restart Containerd
+  shell: "systemctl restart containerd"
+
