@@ -58,6 +58,26 @@
     permanent: yes
     state: enabled
     immediate: yes
+- firewalld:
+    port: 5000/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 9099/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 84443/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+- firewalld:
+    port: 10254/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
 - name: Set IPtables
   shell: echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
 - name: Remove swapfile from /etc/fstab
