@@ -1,17 +1,21 @@
 ---
-- name: Start in-cluster ingress deployment
-  shell: |
-    export KUBECONFIG=/root/.kube/admin.conf
-    helm install ingress-nginx roles/master-ingress/files/ingress-nginx  --set controller.service.externalTrafficPolicy=Local
-  ignore_errors: true
+- name: Wait for Deployments
+  shell: "kubectl -n kube-system  rollout status deployment calico-kube-controllers"
 
 - name: Remove NotReady taint
   shell: |
     export KUBECONFIG=/root/.kube/admin.conf
     kubectl taint node --all node.kubernetes.io/not-ready-
-
+  ignore_errors: true
+  
 - name: Remove ControlPlane taint
   shell: |
     export KUBECONFIG=/root/.kube/admin.conf
     kubectl taint node --all node-role.kubernetes.io/control-plane-
+  ignore_errors: true
 
+- name: Start in-cluster ingress deployment
+  shell: |
+    export KUBECONFIG=/root/.kube/admin.conf
+    helm install ingress-nginx roles/master-ingress/files/ingress-nginx  --set controller.service.externalTrafficPolicy=Local
+  ignore_errors: true

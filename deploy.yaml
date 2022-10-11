@@ -172,7 +172,7 @@
   name: Deploy Registry
   gather_facts: false
   roles:
-    - { role: master-registry, tags: ["infra"] }
+    - { role: master-registry, tags: ["infra", "ingress"] }
   become: yes
   become_user: root
 
@@ -180,6 +180,6 @@
   name: Deploy Ingress Controller
   gather_facts: false
   roles:
-    - { role: master-ingress, tags: ["infra"] }
+    - { role: master-ingress, tags: ["infra", "ingress"] }
   become: yes
   become_user: root
