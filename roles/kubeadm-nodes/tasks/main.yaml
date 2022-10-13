@@ -1,2 +1,6 @@
+- name: Reset Containerd
+  shell: |
+    rm -rf /etc/containerd/config.toml
+    systemctl restart containerd
 - name: Run kubeadm join
   shell: "{{ kubeadm_join_node }} --ignore-preflight-errors=swap"
