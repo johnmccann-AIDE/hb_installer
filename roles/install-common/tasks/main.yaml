@@ -1,0 +1,19 @@
+---
+- name: Install Nats
+  shell: |
+    export KUBECONFIG=/root/.kube/admin.conf
+    helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+    kubectl create ns common
+    helm install nats --namespace=common --version 0.11.0 nats/nats --set nats.limits.maxPayload=8388608 --set cluster.enabled=true
+  ignore_errors: true
+
+- name: Setup Persistent Volume
+  shell: |
+    export KUBECONFIG=/root/.kube/admin.conf
+    kubectl apply -f ./roles/install-common/files/psql-pv.yaml
+
+- name: Start in-cluster postgresql deployment
+  shell: |
+    export KUBECONFIG=/root/.kube/admin.conf
+    helm install postgresql --namespace common --version 11.8.1 --set postgresqlUsername=postgres --set postgresqlPassword=postgres --set volumePermissions.enabled=true bitnami/postgresql
+  ignore_errors: true

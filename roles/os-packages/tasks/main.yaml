@@ -20,10 +20,10 @@
 - name: Install Docker software requirements
   yum:
    name:
-    - docker
+#    - docker
     - containerd.io
-#    - docker-ce
-#    - docker-ce-cli
+    - docker-ce
+    - docker-ce-cli
 - name: Enable Docker
   service: name=docker enabled=yes
 - name: Start Docker
